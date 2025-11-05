@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { LoginRequest, LoginResponse } from '../models/auth.model';
+import { LoginRequest, LoginResponse, VerifyRequest, VerifyResponse } from '../models/auth.model';
 
 @Injectable({
   providedIn: 'root',
@@ -14,5 +14,25 @@ export class AuthService {
 
   login(payload: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.baseUrl}/login`, payload);
+  }
+
+  verifyCode(payload: VerifyRequest): Observable<VerifyResponse> {
+    return this.http.post<VerifyResponse>(`${this.baseUrl}/verify-code`, payload);
+  }
+
+  setToken(token: string): void {
+    localStorage.setItem('accessToken', token);
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem('accessToken');
+  }
+
+  clearToken(): void {
+    localStorage.removeItem('accessToken');
+  }
+
+  isLoggedIn(): boolean {
+    return !!this.getToken();
   }
 }

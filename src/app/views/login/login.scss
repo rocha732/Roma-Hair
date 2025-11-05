@@ -1,11 +1,16 @@
-/* 🌞 Modo claro (por defecto) */
+/* 🌞 Estilos por defecto (modo claro) */
 body {
   background-color: #f8f9fa;
   color: #212529;
-  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* 🌙 Modo oscuro automático *//*
+/* 🧱 Tarjeta en modo claro */
+.card {
+  background-color: #ffffff;
+  color: #212529;
+}
+
+/* 🌙 Modo oscuro automático */
 @media (prefers-color-scheme: dark) {
   body {
     background-color: #121212;
@@ -26,7 +31,7 @@ body {
     border: 1px solid #444;
   }
 
-  input::placeholder  {
+  input::placeholder {
     color: #aaa;
   }
 
@@ -44,4 +49,22 @@ body {
     background-color: #444;
   }
 }
-*/
+.toast-container {
+  z-index: 2000;
+}
+
+.toast {
+  min-width: 250px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
