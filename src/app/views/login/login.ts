@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
+import { StorageService } from '../../services/storage.service';
 import {
   LoginRequest,
   LoginResponse,
@@ -24,15 +26,20 @@ export class LoginComponent {
   countdown = 0;
   private countdownInterval: any;
 
-  // 👇 variables para el toast
+  // 🔔 Toast
   toastMessage: string | null = null;
   toastType: 'success' | 'danger' | 'warning' = 'success';
   private toastTimeout: any;
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private storage: StorageService
+  ) {}
 
   onSubmit() {
     this.loading = true;
+
     if (this.step === 'login') {
       const request: LoginRequest = { email: this.email };
       this.authService.login(request).subscribe({
@@ -65,10 +72,15 @@ export class LoginComponent {
           this.loading = false;
           if (response.isValid) {
             this.showToast('Verificación exitosa', 'success');
-            localStorage.setItem(
-              'accessToken',
-              response.data.accessToken.token
-            );
+
+            // ✅ Guarda el usuario usando StorageService
+            this.storage.setItem('user', {
+              email: this.email,
+              token: response.data.accessToken.token,
+            });
+
+            // ✅ Redirige al dashboard
+            this.router.navigate(['/dashboard']);
           } else {
             this.showToast(response.message || 'Código incorrecto', 'warning');
           }
@@ -99,7 +111,7 @@ export class LoginComponent {
       next: (response: LoginResponse) => {
         this.loading = false;
         if (response.isValid) {
-          this.showToast('Se reenvi\u00f3 el código correctamente', 'success');
+          this.showToast('Se reenvió el código correctamente', 'success');
           this.startCountdown();
         } else {
           this.showToast('No se pudo reenviar el código', 'danger');

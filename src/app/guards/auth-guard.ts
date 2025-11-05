@@ -1,23 +1,22 @@
-import { Injectable } from '@angular/core';
-import {
-  CanActivate,
-  Router,
-  UrlTree
-} from '@angular/router';
+import { inject } from '@angular/core';
+import { CanActivateFn, Router, UrlTree } from '@angular/router';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class AuthGuard implements CanActivate {
+export const AuthGuard: CanActivateFn = (): boolean | UrlTree => {
+  const router = inject(Router);
 
-  constructor(private router: Router) {}
+  // Verifica si está en entorno navegador
+  const isBrowser = typeof window !== 'undefined';
 
-  canActivate(): boolean | UrlTree {
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      return true;
-    } else {
-      return this.router.parseUrl('/login');
-    }
+  if (!isBrowser) {
+    // Si está en SSR, no forzamos redirección todavía
+    return true;
   }
-}
+
+  try {
+    const user = localStorage.getItem('user');
+    return user ? true : router.parseUrl('/');
+  } catch (error) {
+    console.warn('Error al acceder a localStorage', error);
+    return router.parseUrl('/');
+  }
+};

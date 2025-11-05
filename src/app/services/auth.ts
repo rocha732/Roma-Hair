@@ -20,19 +20,4 @@ export class AuthService {
     return this.http.post<VerifyResponse>(`${this.baseUrl}/verify-code`, payload);
   }
 
-  setToken(token: string): void {
-    localStorage.setItem('accessToken', token);
-  }
-
-  getToken(): string | null {
-    return localStorage.getItem('accessToken');
-  }
-
-  clearToken(): void {
-    localStorage.removeItem('accessToken');
-  }
-
-  isLoggedIn(): boolean {
-    return !!this.getToken();
-  }
 }

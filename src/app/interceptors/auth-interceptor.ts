@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   HttpInterceptor,
   HttpRequest,
@@ -6,17 +6,17 @@ import {
   HttpEvent,
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AuthService } from '../services/auth';
+import { StorageService } from '../services/storage.service'; // ✅ usa el nuevo servicio
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private authService: AuthService) {}
+  private storage = inject(StorageService);
 
   intercept(
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    const token = this.authService.getToken();
+    const token = this.storage.getItem('user')?.token; // ✅ obtiene token seguro
 
     if (token) {
       const cloned = req.clone({
